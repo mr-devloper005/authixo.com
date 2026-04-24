@@ -2,114 +2,120 @@ import type { TaskKey } from '@/lib/site-config'
 
 export const siteContent = {
   navbar: {
-    tagline: 'Independent news desk',
+    tagline: 'Independent coverage & short dispatches',
   },
   footer: {
-    tagline: 'Simple publishing for press-style updates',
+    tagline: 'Clarity of record over volume of noise',
   },
   hero: {
-    badge: 'Latest updates',
-    title: ['Clear publishing, simple reading, no extra noise.'],
+    badge: 'Dispatch',
+    title: ['Notes from the field, in plain language.', 'No funnels, no template chrome.'],
     description:
-      'A minimal article-style publishing template built for regular updates, announcements, and media distribution posts.',
+      'Authixo publishes focused updates and longer reads without the usual product-page chrome—blocks of type, quiet hierarchy, and room to think.',
     primaryCta: {
-      label: 'Browse latest posts',
+      label: 'Read latest dispatches',
       href: '/updates',
     },
     secondaryCta: {
-      label: 'Contact us',
-      href: '/contact',
+      label: 'Search the archive',
+      href: '/search',
     },
-    searchPlaceholder: 'Search posts',
+    searchPlaceholder: 'Search dispatches and posts',
     focusLabel: 'Latest',
-    featureCardBadge: 'editor note',
-    featureCardTitle: 'Recent updates appear directly on the homepage.',
+    featureCardBadge: 'In this issue',
+    featureCardTitle: 'The front page is the feed.',
     featureCardDescription:
-      'The homepage works as a clean front page so new posts stay visible without decorative sections getting in the way.',
+      'New work surfaces as soon as it ships—no carousel tricks, no filler panels, no borrowed “template” copy.',
   },
   home: {
     metadata: {
-      title: 'Latest updates and newsroom posts',
+      title: 'Authixo — dispatches, essays, and updates',
       description:
-        'Read the latest updates, announcements, and stories through a simple archive-first publishing experience.',
-      openGraphTitle: 'Latest updates and newsroom posts',
-      openGraphDescription:
-        'A simple publishing template for updates, announcements, and readable article pages.',
-      keywords: ['newsroom posts', 'latest updates', 'announcements', 'press articles'],
+        'Independent editorial updates from Authixo: announcements, analysis, and readable long-form in a single calm archive.',
+      openGraphTitle: 'Authixo — dispatches, essays, and updates',
+      openGraphDescription: 'A black-and-rose editorial front for focused reading.',
+      keywords: [
+        'Authixo',
+        'independent media',
+        'essays',
+        'dispatches',
+        'long-form',
+        'newsroom',
+      ],
     },
-    introBadge: 'About',
-    introTitle: 'A quiet publishing template made for regular updates.',
+    introBadge: 'Masthead',
+    introTitle: 'A publication-shaped homepage, not a product landing page.',
     introParagraphs: [
-      'This template is designed for sites that publish straightforward updates and want the homepage to behave like a clean front page rather than a product landing page.',
-      'Posts are visible immediately, archives stay easy to scan, and the reading page keeps the focus on the article itself.',
-      'The interface is intentionally simple so the site feels usable, familiar, and fast to update.',
+      'The layout is built for asymmetry: a dark masthead, a rosy lead, then text that gets to breathe. Nothing here pretends to be a dashboard or a “growth” surface.',
+      'You can read from the home stack, open the full archive, or search across every post the system still supports under the hood.',
     ],
-    sideBadge: 'What it prioritizes',
+    sideBadge: 'How we work',
     sidePoints: [
-      'Recent posts directly on the homepage.',
-      'Simple archive layout with sidebar search and recent items.',
-      'Readable article pages without comments or extra modules.',
-      'A publishing-first structure that stays easy to maintain.',
+      'Primary dispatches on the home block; everything else still reachable by URL and search.',
+      'Archive and filters stay out of the way until you need them.',
+      'Detail pages are tuned for long reading, not for engagement widgets.',
     ],
     primaryLink: {
-      label: 'Open archive',
+      label: 'Open /updates',
       href: '/updates',
     },
     secondaryLink: {
-      label: 'Contact desk',
-      href: '/contact',
+      label: 'Search',
+      href: '/search',
     },
   },
   cta: {
-    badge: 'Get in touch',
-    title: 'Use this template when publishing regular updates matters more than visual effects.',
-    description:
-      'A straightforward layout for announcements, media coverage, partner updates, and newsroom-style content.',
+    badge: 'Editorial',
+    title: 'Need a correction, a tip, or a line for the record?',
+    description: 'The desk is thin on ceremony—send a direct note and we will route it.',
     primaryCta: {
-      label: 'Contact us',
+      label: 'Contact',
       href: '/contact',
     },
     secondaryCta: {
-      label: 'View archive',
+      label: 'Browse dispatches',
       href: '/updates',
     },
   },
-  taskSectionHeading: 'Latest posts',
-  taskSectionDescriptionSuffix: 'Read the newest published updates.',
+  taskSectionHeading: 'Latest dispatches',
+  taskSectionDescriptionSuffix: 'From the /updates stream.',
 } as const
 
-export const taskPageMetadata: Record<Exclude<TaskKey, 'comment' | 'org' | 'social'>, { title: string; description: string }> = {
+export const taskPageMetadata: Record<
+  Exclude<TaskKey, 'comment' | 'org' | 'social'>,
+  { title: string; description: string }
+> = {
   article: {
-    title: 'Articles',
-    description: 'Read the latest posts and long-form updates.',
+    title: 'Essays & articles',
+    description: 'Longer reads and file-style pieces in a calmer, grid-forward layout.',
   },
   listing: {
     title: 'Listings',
-    description: 'Explore listings and directory-style entries.',
+    description: 'Directory-style entries when this task is active.',
   },
   classified: {
     title: 'Classifieds',
-    description: 'Browse classifieds and short-form notices.',
+    description: 'Short notices and classified-style posts.',
   },
   image: {
     title: 'Images',
-    description: 'Browse image-led updates and visual posts.',
+    description: 'Visual-first posts and galleries.',
   },
   profile: {
     title: 'Profiles',
-    description: 'View profile pages and public identities.',
+    description: 'Public profile surfaces.',
   },
   sbm: {
     title: 'Bookmarks',
-    description: 'Browse curated resources and saved links.',
+    description: 'Curated links and saved resources.',
   },
   pdf: {
-    title: 'Resources',
-    description: 'Open PDFs and downloadable files.',
+    title: 'Files',
+    description: 'Downloadable documents.',
   },
   mediaDistribution: {
-    title: 'Latest updates',
-    description: 'Read the latest published updates and announcements.',
+    title: 'Dispatches',
+    description: 'Short and medium updates in a scan-dense, journal list.',
   },
 }
 
@@ -117,25 +123,71 @@ export const taskIntroCopy: Record<
   TaskKey,
   { title: string; paragraphs: string[]; links: { label: string; href: string }[] }
 > = {
-  listing: { title: 'Listings', paragraphs: ['Directory entries and service pages.'], links: [{ label: 'Home', href: '/' }] },
-  article: { title: 'Articles', paragraphs: ['General long-form article feed.'], links: [{ label: 'Home', href: '/' }] },
-  classified: { title: 'Classifieds', paragraphs: ['Short-form posts and notices.'], links: [{ label: 'Home', href: '/' }] },
-  image: { title: 'Images', paragraphs: ['Image-first posts and galleries.'], links: [{ label: 'Home', href: '/' }] },
-  profile: { title: 'Profiles', paragraphs: ['Profile pages and identity surfaces.'], links: [{ label: 'Home', href: '/' }] },
-  sbm: { title: 'Bookmarks', paragraphs: ['Curated saved links and references.'], links: [{ label: 'Home', href: '/' }] },
-  pdf: { title: 'Resources', paragraphs: ['Downloadable files and documents.'], links: [{ label: 'Home', href: '/' }] },
-  social: { title: 'Social', paragraphs: ['Short updates and activity.'], links: [{ label: 'Home', href: '/' }] },
-  comment: { title: 'Comments', paragraphs: ['Commentary and response posts.'], links: [{ label: 'Home', href: '/' }] },
-  org: { title: 'Organizations', paragraphs: ['Organization pages and entities.'], links: [{ label: 'Home', href: '/' }] },
-  mediaDistribution: {
-    title: 'Latest updates',
+  listing: {
+    title: 'Listings',
+    paragraphs: ['Directory entries when this lane is enabled.'],
+    links: [{ label: 'Home', href: '/' }],
+  },
+  article: {
+    title: 'Essays & articles',
     paragraphs: [
-      'This archive is designed for straightforward publishing: regular updates, announcements, and media-style posts presented in a clean reading format.',
-      'The layout stays simple so visitors can scan headlines quickly, open stories easily, and move through the archive without distraction.',
+      'This lane uses a different rhythm from /updates: wider image surfaces, a softer paper field, and a three-column feel at large breakpoints.',
+      'The underlying feed and filters are the same system—only the frame changes.',
     ],
     links: [
       { label: 'Home', href: '/' },
-      { label: 'Contact', href: '/contact' },
+      { label: 'Dispatches', href: '/updates' },
+    ],
+  },
+  classified: {
+    title: 'Classifieds',
+    paragraphs: ['Short-form notices.'],
+    links: [{ label: 'Home', href: '/' }],
+  },
+  image: {
+    title: 'Images',
+    paragraphs: ['Image-first posts.'],
+    links: [{ label: 'Home', href: '/' }],
+  },
+  profile: {
+    title: 'Profiles',
+    paragraphs: ['Identity surfaces.'],
+    links: [{ label: 'Home', href: '/' }],
+  },
+  sbm: {
+    title: 'Bookmarks',
+    paragraphs: ['Curated resources.'],
+    links: [{ label: 'Home', href: '/' }],
+  },
+  pdf: {
+    title: 'Files',
+    paragraphs: ['Downloadable files.'],
+    links: [{ label: 'Home', href: '/' }],
+  },
+  social: {
+    title: 'Social',
+    paragraphs: ['Activity-style posts.'],
+    links: [{ label: 'Home', href: '/' }],
+  },
+  comment: {
+    title: 'Comments',
+    paragraphs: ['Commentary.'],
+    links: [{ label: 'Home', href: '/' }],
+  },
+  org: {
+    title: 'Organizations',
+    paragraphs: ['Organization pages.'],
+    links: [{ label: 'Home', href: '/' }],
+  },
+  mediaDistribution: {
+    title: 'Dispatches',
+    paragraphs: [
+      'A tight, journal-style list: category and date in the margin, a horizontal scan line, and fast movement through the stream.',
+      'This is the emphasized lane for Authixo; other tasks remain in the system for search and direct URLs.',
+    ],
+    links: [
+      { label: 'Home', href: '/' },
+      { label: 'Search all', href: '/search' },
     ],
   },
 }

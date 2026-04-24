@@ -1,49 +1,44 @@
 ﻿import { PageShell } from '@/components/shared/page-shell'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 
 const services = [
-  { name: 'Web App', status: 'Operational' },
-  { name: 'API', status: 'Operational' },
-  { name: 'Media CDN', status: 'Operational' },
+  { name: 'Reader & archive', status: 'Operational' },
+  { name: 'Publishing API', status: 'Operational' },
+  { name: 'Media delivery', status: 'Degraded in edge regions' },
 ]
 
 const incidents = [
-  { date: 'Mar 12, 2026', title: 'Delayed notifications', status: 'Resolved' },
-  { date: 'Feb 22, 2026', title: 'Search indexing lag', status: 'Resolved' },
+  { date: 'Apr 2, 2026', title: 'Elevated compile times on deploy preview', status: 'Monitoring' },
+  { date: 'Mar 12, 2026', title: 'Notification queue lag (10m)', status: 'Resolved' },
 ]
 
 export default function StatusPage() {
   return (
     <PageShell
-      title="System Status"
-      description="Real-time uptime and service health."
+      eyebrow="Uptime"
+      title="Status"
+      description="A simple board for the pieces readers notice. This page is hand-edited in the template—wire your own provider when you go live."
     >
-      <div className="space-y-6">
-        <div className="grid gap-4 md:grid-cols-3">
+      <div className="space-y-8">
+        <div className="grid gap-0 border border-[#0a0a0a]/10 sm:grid-cols-3">
           {services.map((service) => (
-            <Card key={service.name} className="border-border bg-card">
-              <CardContent className="p-6">
-                <h2 className="text-lg font-semibold text-foreground">{service.name}</h2>
-                <Badge className="mt-3" variant="secondary">{service.status}</Badge>
-              </CardContent>
-            </Card>
+            <div key={service.name} className="border-b border-[#0a0a0a]/8 p-5 sm:border-b-0 sm:border-r sm:last:border-r-0">
+              <h2 className="text-sm font-medium uppercase tracking-[0.12em] text-[#0a0a0a]/60">{service.name}</h2>
+              <p className="mt-3 text-base font-medium text-[#0a0a0a]">{service.status}</p>
+            </div>
           ))}
         </div>
-        <Card className="border-border bg-card">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-foreground">Incident History</h3>
-            <div className="mt-4 space-y-3">
-              {incidents.map((incident) => (
-                <div key={incident.title} className="rounded-lg border border-border bg-secondary/40 px-4 py-3">
-                  <div className="text-xs text-muted-foreground">{incident.date}</div>
-                  <div className="text-sm font-medium text-foreground">{incident.title}</div>
-                  <div className="text-xs text-muted-foreground">{incident.status}</div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <div className="border border-[#0a0a0a]/10 bg-white/30 p-5 sm:p-6">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0a0a0a]/50">Log</h3>
+          <ul className="mt-4 space-y-3">
+            {incidents.map((incident) => (
+              <li key={incident.title} className="border-b border-[#0a0a0a]/8 pb-3 last:border-0 last:pb-0">
+                <p className="text-xs text-[#0a0a0a]/45">{incident.date}</p>
+                <p className="text-sm font-medium text-[#0a0a0a]">{incident.title}</p>
+                <p className="text-xs text-[#3d3532]">{incident.status}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </PageShell>
   )
