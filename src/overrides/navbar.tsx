@@ -1,40 +1,89 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
-import { Search } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { Menu, X } from 'lucide-react'
+import { MastheadMark } from '@/components/shared/masthead-mark'
 import { SITE_CONFIG } from '@/lib/site-config'
 
 export const NAVBAR_OVERRIDE_ENABLED = true
 
-const utilityLinks = [
-  { label: 'About Us', href: '/about' },
-  { label: 'Terms of Service', href: '/terms' },
-  { label: 'Privacy Policy', href: '/privacy' },
-  { label: 'Contact Us', href: '/contact' },
+const primaryPath = '/updates'
+const navMain = [
+  { label: 'Dispatches', href: primaryPath },
+  { label: 'Contact', href: '/contact' },
 ]
 
+function navItemActive(pathname: string, itemHref: string) {
+  if (itemHref === primaryPath) {
+    return pathname === primaryPath || pathname.startsWith(`${primaryPath}/`)
+  }
+  return pathname === itemHref
+}
+
 export function NavbarOverride() {
+  const [open, setOpen] = useState(false)
+  const pathname = usePathname() ?? ''
+
   return (
-    <header className="border-b border-neutral-200 bg-white text-neutral-800">
-      <div className="border-b border-neutral-200 bg-neutral-50">
-        <div className="mx-auto flex max-w-6xl flex-wrap gap-x-4 gap-y-1 px-4 py-3 text-[13px] sm:px-6">
-          {utilityLinks.map((item) => (
-            <Link key={item.label} href={item.href} className="hover:text-black">{item.label}</Link>
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0a0a0a] text-[#f4f0ec]">
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10">
+        <div className="min-w-0">
+          <Link
+            href="/"
+            className="block leading-none"
+            aria-label={`${SITE_CONFIG.name} — home`}
+          >
+            <MastheadMark className="h-10 w-10 sm:h-11 sm:w-11" />
+          </Link>
+        </div>
+
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+          {navMain.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`px-3 py-2 text-[11px] font-medium uppercase tracking-[0.2em] transition ${
+                navItemActive(pathname, item.href) ? 'text-white' : 'text-white/60 hover:text-white'
+              }`}
+            >
+              {item.label}
+            </Link>
           ))}
+        </nav>
+
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center text-white/80 md:hidden"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
-      <div className="mx-auto max-w-6xl px-4 py-8 text-center sm:px-6">
-        <Link href="/" className="text-5xl font-black uppercase tracking-[0.18em] text-black sm:text-6xl" style={{ fontFamily: 'Georgia, Times New Roman, serif' }}>
-          {SITE_CONFIG.name}
-        </Link>
-      </div>
-      <div className="border-t border-neutral-200">
-        <div className="mx-auto flex max-w-6xl items-center justify-center gap-6 px-4 py-4 text-sm uppercase tracking-[0.08em] sm:px-6">
-          <Link href="/" className="text-[#4a90ff]">Home</Link>
-          <Link href="/contact" className="hover:text-black">Contact</Link>
-          <Link href="/search" className="hover:text-black"><Search className="h-4 w-4" /></Link>
+
+      {open ? (
+        <div className="border-t border-white/10 bg-[#0a0a0a] px-4 py-4 md:hidden">
+          <div className="mx-auto flex max-w-[1600px] flex-col gap-1">
+            {navMain.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`py-2 text-sm font-medium uppercase tracking-[0.18em] ${
+                  navItemActive(pathname, item.href) ? 'text-white' : 'text-white/65'
+                }`}
+                onClick={() => setOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : null}
     </header>
   )
 }

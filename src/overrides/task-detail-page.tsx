@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Search } from 'lucide-react'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
 import { fetchTaskPostBySlug, fetchTaskPosts } from '@/lib/task-data'
@@ -14,54 +15,89 @@ export async function TaskDetailPageOverride({ slug }: { task: TaskKey; slug: st
   const recent = (await fetchTaskPosts('mediaDistribution', 8, { fresh: true })).filter((item) => item.slug !== slug).slice(0, 5)
   const content = (post.content || {}) as Record<string, unknown>
   const html = formatRichHtml((content.body as string) || post.summary || '', 'Post body will appear here.')
+  const dateLabel = new Date(post.publishedAt || Date.now()).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900">
+    <div className="min-h-screen bg-[#e8e2dc] text-[#0a0a0a]">
       <NavbarShell />
-      <section className="bg-neutral-900 py-14 text-white">
-        <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
-          <h1 className="mx-auto max-w-5xl text-4xl font-black uppercase leading-tight tracking-[0.02em] sm:text-5xl">{post.title}</h1>
-          <div className="mt-5 flex items-center justify-center gap-3 text-sm text-neutral-300">
-            <Link href="/">Home</Link>
-            <span>›</span>
-            <span className="truncate">{post.title}</span>
+      <section className="border-b border-white/10 bg-[#0a0a0a] text-[#f4f0ec]">
+        <div className="mx-auto max-w-3xl px-4 pb-12 pt-10 sm:px-6 lg:px-8">
+          <div className="text-[10px] font-medium uppercase tracking-[0.3em] text-white/50">
+            <Link href="/updates" className="text-white/70 transition hover:text-white">
+              Dispatches
+            </Link>
+            <span className="px-2 text-white/35">/</span>
+            <span className="text-white/50">File</span>
           </div>
+          <h1
+            className="mt-6 text-[1.9rem] font-medium leading-[1.08] tracking-[-0.04em] sm:text-4xl lg:text-[2.4rem] lg:leading-[1.06]"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            {post.title}
+          </h1>
+          <p className="mt-5 text-sm text-white/60">
+            <time dateTime={post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined}>{dateLabel}</time>
+            <span className="px-2 text-white/30">·</span>
+            <span>{post.authorName || 'Authixo desk'}</span>
+          </p>
         </div>
       </section>
-      <main className="mx-auto grid max-w-6xl gap-12 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_280px]">
+
+      <div className="h-2 w-full bg-[#C6A69F]" aria-hidden />
+
+      <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.4fr)] lg:gap-14 lg:px-8">
         <article>
-          <div className="border border-[#f0dfd7] bg-[#faece7] px-6 py-5 text-sm text-neutral-600">
-            <span className="mr-3 inline-block bg-neutral-800 px-3 py-1 text-white">{new Date(post.publishedAt || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-            <span>by {post.authorName || 'Editorial Desk'}</span>
-          </div>
-          <div className="prose prose-lg mt-10 max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:tracking-[0.01em]">
+          <div
+            className="article-content prose prose-lg max-w-none border-0 text-[#1a1412] [font-family:var(--font-sans)]
+            prose-p:leading-[1.8] prose-headings:[font-family:var(--font-display)]"
+          >
             <RichContent html={html} />
           </div>
-          <div className="mt-12 grid gap-0 border border-neutral-200 md:grid-cols-2">
-            {recent.slice(0,2).map((item, index) => (
-              <Link key={item.id} href={`/updates/${item.slug}`} className="border-neutral-200 p-6 first:border-b md:first:border-b-0 md:first:border-r">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">{index === 0 ? 'Previous Post' : 'Next Post'}</p>
-                <p className="mt-3 text-lg leading-8 text-neutral-700">{item.title}</p>
-              </Link>
-            ))}
-          </div>
-        </article>
-        <aside className="space-y-6">
-          <div className="border border-neutral-200 p-6">
-            <div className="flex items-center gap-0">
-              <input className="h-12 flex-1 border border-neutral-200 px-4 text-sm outline-none" placeholder="Type here to search" />
-              <button className="flex h-12 w-12 items-center justify-center bg-neutral-800 text-white">Q</button>
-            </div>
-          </div>
-          <div className="border border-neutral-200 p-6">
-            <div className="space-y-5">
-              {recent.map((item) => (
-                <Link key={item.id} href={`/updates/${item.slug}`} className="block border-b border-neutral-200 pb-5 last:border-b-0 last:pb-0">
-                  <p className="text-base leading-7 text-neutral-700">{item.title}</p>
+
+          {recent.length >= 2 ? (
+            <div className="mt-16 grid border border-[#0a0a0a]/10 md:grid-cols-2">
+              {recent.slice(0, 2).map((item, index) => (
+                <Link
+                  key={item.id}
+                  href={`/updates/${item.slug}`}
+                  className="border-b border-[#0a0a0a]/10 p-5 transition first:border-b md:first:border-r md:[&:first-child]:border-b-0"
+                >
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#0a0a0a]/40">{index === 0 ? 'Previous' : 'Next'}</p>
+                  <p className="mt-3 text-base font-medium leading-snug text-[#0a0a0a]" style={{ fontFamily: 'var(--font-display)' }}>
+                    {item.title}
+                  </p>
                 </Link>
               ))}
             </div>
+          ) : null}
+        </article>
+
+        <aside className="mt-10 space-y-0 border border-[#0a0a0a]/10 bg-white/20 lg:mt-0">
+          <div className="border-b border-[#0a0a0a]/10 p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#0a0a0a]/50">In this file</p>
+            <ul className="mt-3 space-y-2">
+              {recent.map((item) => (
+                <li key={item.id}>
+                  <Link href={`/updates/${item.slug}`} className="text-sm leading-relaxed text-[#2a2220] transition hover:text-[#0a0a0a]">
+                    {item.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
+          <form action="/search" className="p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#0a0a0a]/50">Search</p>
+            <label className="mt-2 flex items-stretch border border-[#0a0a0a]/15">
+              <input name="q" className="min-w-0 flex-1 border-0 bg-white px-3 py-2.5 text-sm text-[#0a0a0a] outline-none" placeholder="Query the archive" />
+              <button type="submit" className="inline-flex w-10 shrink-0 items-center justify-center bg-[#0a0a0a] text-white" aria-label="Search">
+                <Search className="h-4 w-4" />
+              </button>
+            </label>
+          </form>
         </aside>
       </main>
       <Footer />

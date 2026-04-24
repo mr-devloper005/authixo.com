@@ -1,93 +1,85 @@
-import Link from "next/link";
-import { PageShell } from "@/components/shared/page-shell";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { mockTeamMembers } from "@/data/mock-data";
-import { SITE_CONFIG } from "@/lib/site-config";
+import Link from "next/link"
+import { PageShell } from "@/components/shared/page-shell"
+import { mockTeamMembers } from "@/data/mock-data"
+import { SITE_CONFIG } from "@/lib/site-config"
 
-const highlights = [
-  { label: "Creators onboarded", value: "12k+" },
-  { label: "Bookmarks shared", value: "180k" },
-  { label: "Listings published", value: "8.6k" },
-];
+const masthead = [
+  "Authixo is a small, independent channel for media updates and long-form notes—typeset like a serious magazine, without the default SaaS skin.",
+  "We keep the public pages narrow on purpose: one masthead, one archive, and reading views that do not fight the words.",
+]
 
-const values = [
-  { title: "Curated by people", description: "We believe trusted recommendations beat endless feeds." },
-  { title: "Designed for focus", description: "Clear, calm UI helps you find the next best resource fast." },
-  { title: "Built to share", description: "Collections make collaboration and knowledge flow effortless." },
-];
+const columns = [
+  {
+    title: "What we file",
+    body: "Short dispatches, announcements, and longer pieces when a story needs room. The mix can flex; the frame stays quiet.",
+  },
+  {
+    title: "What we avoid",
+    body: "Engagement baits, growth chrome, and recycled template copy. If it reads like a product landing page, it does not ship on the home feed.",
+  },
+  {
+    title: "How to read",
+    body: "Start at the front, open /updates, or use search when you need a keyword. The interface is the same for every task the system supports under the hood.",
+  },
+]
 
 export default function AboutPage() {
   return (
     <PageShell
-      title={`About ${SITE_CONFIG.name}`}
-      description={`${SITE_CONFIG.name} is a modern platform for creators, communities, and curated business discovery.`}
-      actions={
-        <>
-          <Button variant="outline" asChild>
-            <Link href="/team">Meet the Team</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/contact">Contact Us</Link>
-          </Button>
-        </>
+      eyebrow={SITE_CONFIG.name}
+      title="About the desk"
+      description="A thin editorial front: black, paper, and type—aligned with the home page, not a separate marketing product."
+      leadBand={
+        <p className="max-w-3xl text-[0.95rem] leading-relaxed sm:text-base">
+          We publish in public; we do not run a helpdesk funnel on the home page. Use Contact when you need a line to a human.
+        </p>
       }
     >
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <Card className="border-border bg-card">
-          <CardContent className="space-y-4 p-6">
-            <Badge variant="secondary">Our Story</Badge>
-            <h2 className="text-2xl font-semibold text-foreground">
-              A single home for knowledge, discovery, and community.
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {SITE_CONFIG.name} brings together publishing, listings, and social bookmarking so teams can move faster
-              and keep their best resources close.
-            </p>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {highlights.map((item) => (
-                <div key={item.label} className="rounded-lg border border-border bg-secondary/40 p-4">
-                  <div className="text-2xl font-semibold text-foreground">{item.value}</div>
-                  <div className="text-xs text-muted-foreground">{item.label}</div>
-                </div>
-              ))}
+      <div className="space-y-8">
+        {masthead.map((p, i) => (
+          <p key={i} className="text-base leading-[1.75] text-[#1a1412]">
+            {p}
+          </p>
+        ))}
+
+        <div className="grid gap-0 border border-[#0a0a0a]/10 sm:grid-cols-3">
+          {columns.map((c) => (
+            <div key={c.title} className="border-b border-[#0a0a0a]/8 p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0">
+              <h2 className="text-sm font-medium uppercase tracking-[0.2em] text-[#0a0a0a]/55">{c.title}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-[#2a2220]">{c.body}</p>
             </div>
-          </CardContent>
-        </Card>
-        <div className="space-y-4">
-          {values.map((value) => (
-            <Card key={value.title} className="border-border bg-card">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-foreground">{value.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{value.description}</p>
-              </CardContent>
-            </Card>
           ))}
         </div>
-      </div>
 
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
-        {mockTeamMembers.map((member) => (
-          <Card key={member.id} className="border-border bg-card transition-transform hover:-translate-y-1">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={member.avatar} alt={member.name} />
-                  <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{member.name}</p>
-                  <p className="text-xs text-muted-foreground">{member.role}</p>
-                </div>
-              </div>
-              <p className="mt-3 text-sm text-muted-foreground">{member.bio}</p>
-              <p className="mt-3 text-xs text-muted-foreground">{member.location}</p>
-            </CardContent>
-          </Card>
-        ))}
+        <div className="border border-[#0a0a0a]/10 bg-white/30 p-6 sm:p-8">
+          <h2 className="text-xl font-medium" style={{ fontFamily: "var(--font-display)" }}>
+            People
+          </h2>
+          <p className="mt-2 text-sm text-[#3d3532]">A rotating bench—names below are sample roster entries for the template.</p>
+          <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {mockTeamMembers.map((m) => (
+              <li key={m.id} className="border-b border-[#0a0a0a]/10 pb-5 sm:border-0 sm:pb-0">
+                <p className="font-medium text-[#0a0a0a]">{m.name}</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-[#0a0a0a]/50">{m.role}</p>
+                <p className="mt-2 text-sm leading-relaxed text-[#2a2220]">{m.bio}</p>
+                <p className="mt-1 text-xs text-[#0a0a0a]/45">{m.location}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-4 text-sm">
+          <Link
+            href="/team"
+            className="inline-flex border border-[#0a0a0a] bg-[#0a0a0a] px-4 py-2.5 text-white transition hover:bg-white hover:text-[#0a0a0a]"
+          >
+            Open org feed
+          </Link>
+          <Link href="/contact" className="text-[#0a0a0a] underline decoration-[#0a0a0a]/25 underline-offset-4">
+            Write the desk
+          </Link>
+        </div>
       </div>
     </PageShell>
-  );
+  )
 }

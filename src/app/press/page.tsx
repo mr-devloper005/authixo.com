@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { PageShell } from '@/components/shared/page-shell'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -23,31 +21,33 @@ export default function PressPage() {
 
   return (
     <PageShell
+      eyebrow="Media"
       title="Press"
-      description="Media resources, brand assets, and press coverage."
+      description="Logotype, mark, and boilerplate for outlets covering this publication. Coverage list is sample data in the template."
+      leadBand={
+        <p>Primary mark lives at <code className="text-[#1a1412]">/favicon.png</code> and the larger square asset matches the home masthead.</p>
+      }
     >
       <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <Card className="border-border bg-card">
-          <CardContent className="p-6 space-y-3">
-            <h2 className="text-lg font-semibold text-foreground">Press Kit</h2>
-            <p className="text-sm text-muted-foreground">
-              Download logos, product screenshots, and brand guidelines for media use.
-            </p>
-            <div className="grid gap-2">
+        <div className="space-y-4 border border-[#0a0a0a]/10 bg-white/30 p-5 sm:p-6">
+          <h2 className="text-lg font-medium" style={{ fontFamily: 'var(--font-display)' }}>Press kit</h2>
+            <p className="text-sm text-[#2a2220]">Downloads are simulated for the demo. Swap in real ZIPs and guidelines when you ship.</p>
+            <div className="space-y-2">
               {mockPressAssets.map((asset) => (
-                <div key={asset.id} className="rounded-lg border border-border bg-secondary/40 px-4 py-3">
+                <div key={asset.id} className="border border-[#0a0a0a]/10 bg-[#e8e2dc]/80 px-4 py-3">
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
-                      <p className="text-sm font-medium text-foreground">{asset.title}</p>
-                      <p className="text-xs text-muted-foreground">{asset.description}</p>
+                      <p className="text-sm font-medium text-[#0a0a0a]">{asset.title}</p>
+                      <p className="text-xs text-[#3d3532]">{asset.description}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="secondary">{asset.fileType}</Badge>
-                      <Button size="sm" variant="outline" onClick={() => setActiveAssetId(asset.id)}>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#0a0a0a]/50">{asset.fileType}</span>
+                      <Button size="sm" variant="outline" className="border-[#0a0a0a]/20" onClick={() => setActiveAssetId(asset.id)}>
                         Preview
                       </Button>
                       <Button
                         size="sm"
+                        className="bg-[#0a0a0a] text-white"
                         onClick={() =>
                           toast({
                             title: 'Download started',
@@ -62,17 +62,14 @@ export default function PressPage() {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-        <div className="space-y-4">
+        </div>
+        <div className="space-y-0 border border-[#0a0a0a]/10">
           {mockPressCoverage.map((item) => (
-            <Card key={item.id} className="border-border bg-card transition-transform hover:-translate-y-1">
-              <CardContent className="p-6">
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">{item.outlet}</div>
-                <p className="mt-2 text-sm text-foreground">{item.headline}</p>
-                <p className="mt-2 text-xs text-muted-foreground">{item.date}</p>
-              </CardContent>
-            </Card>
+            <div key={item.id} className="border-b border-[#0a0a0a]/8 p-5 last:border-b-0 sm:p-6">
+              <div className="text-xs uppercase tracking-[0.2em] text-[#0a0a0a]/50">{item.outlet}</div>
+              <p className="mt-2 text-sm text-[#0a0a0a]">{item.headline}</p>
+              <p className="mt-2 text-xs text-[#3d3532]">{item.date}</p>
+            </div>
           ))}
         </div>
       </div>

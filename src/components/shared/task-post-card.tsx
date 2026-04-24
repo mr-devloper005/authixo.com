@@ -61,11 +61,17 @@ const cardStyles = {
     title: 'text-slate-950',
     badge: 'bg-slate-950 text-white',
   },
+  'editorial-journal': {
+    frame: 'rounded-none border-0 border-b border-[#0a0a0a]/12 bg-transparent transition hover:bg-[#C6A69F]/[0.12]',
+    muted: 'text-[#3d3532]',
+    title: 'text-[#0a0a0a]',
+    badge: 'bg-[#0a0a0a] text-[#f4f0ec]',
+  },
   'editorial-feature': {
-    frame: 'rounded-[1.8rem] border border-[rgba(125,83,45,0.12)] bg-[#fffaf3] shadow-[0_18px_55px_rgba(89,52,24,0.1)] hover:-translate-y-1 hover:shadow-[0_26px_75px_rgba(89,52,24,0.14)]',
-    muted: 'text-[#71584b]',
-    title: 'text-[#2b1d17]',
-    badge: 'bg-[#2b1d17] text-[#fff3df]',
+    frame: 'rounded-none border border-[#0a0a0a]/10 bg-white shadow-none transition hover:border-[#0a0a0a]/25',
+    muted: 'text-[#3d3532]',
+    title: 'text-[#0a0a0a]',
+    badge: 'bg-[#0a0a0a] text-[#f4f0ec]',
   },
   'studio-panel': {
     frame: 'rounded-[1.9rem] border border-white/10 bg-[linear-gradient(180deg,rgba(7,17,31,0.96),rgba(12,23,43,0.96))] text-white shadow-[0_24px_80px_rgba(15,23,42,0.35)] hover:-translate-y-1 hover:shadow-[0_30px_90px_rgba(15,23,42,0.42)]',
@@ -81,7 +87,11 @@ const cardStyles = {
   },
 } as const
 
-const getVariantForTask = (taskKey: TaskKey) => SITE_THEME.cards[taskKey] || 'listing-elevated'
+const getVariantForTask = (taskKey: TaskKey): keyof typeof cardStyles => {
+  const v = SITE_THEME.cards[taskKey as keyof typeof SITE_THEME.cards]
+  if (v && v in cardStyles) return v
+  return 'listing-elevated'
+}
 
 export function TaskPostCard({
   post,
@@ -156,6 +166,49 @@ export function TaskPostCard({
             {content.email ? <span className={`inline-flex items-center gap-1 ${cardTone.muted}`}><Mail className="h-3.5 w-3.5" />{content.email}</span> : null}
           </div>
           <div className={`mt-auto pt-5 text-sm font-semibold ${cardTone.cta}`}>{variant === 'classified' ? 'View offer' : 'View details'}</div>
+        </div>
+      </Link>
+    )
+  }
+
+  if (getVariantForTask(variant) === 'editorial-journal' && !isDirectorySurface) {
+    return (
+      <Link
+        href={href}
+        className={`group flex h-full flex-row gap-0 overflow-hidden border-b border-[#0a0a0a]/10 transition sm:gap-6 ${visualVariant.frame}`}
+      >
+        <div className="relative aspect-[4/3] w-[38%] shrink-0 overflow-hidden bg-[#e8e0db] sm:aspect-[16/11] sm:max-w-[200px]">
+          <ContentImage
+            src={image}
+            alt={altText}
+            fill
+            sizes={imageSizes}
+            quality={75}
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            intrinsicWidth={960}
+            intrinsicHeight={720}
+          />
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col justify-center py-4 pl-1 sm:py-5">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span
+              className={`inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.22em] ${visualVariant.muted}`}
+            >
+              {category}
+            </span>
+            <time
+              className={`text-[10px] uppercase tracking-[0.2em] ${visualVariant.muted}`}
+              dateTime={post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined}
+            >
+              {post.publishedAt
+                ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                : '—'}
+            </time>
+          </div>
+          <h3 className={`mt-2 line-clamp-2 font-semibold leading-snug sm:text-lg ${visualVariant.title}`} style={{ fontFamily: 'var(--font-display)' }}>{post.title}</h3>
+          <p className={`mt-2 line-clamp-2 text-sm leading-relaxed ${visualVariant.muted}`}>
+            {getExcerpt(content.description || post.summary, 160) || 'Open the full dispatch.'}
+          </p>
         </div>
       </Link>
     )
