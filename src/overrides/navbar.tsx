@@ -32,10 +32,16 @@ export function NavbarOverride() {
         <div className="min-w-0">
           <Link
             href="/"
-            className="block leading-none"
+            className="flex max-w-full items-center gap-2.5 sm:gap-3"
             aria-label={`${SITE_CONFIG.name} — home`}
           >
-            <MastheadMark className="h-10 w-10 sm:h-11 sm:w-11" />
+            <MastheadMark className="h-10 w-10 shrink-0 sm:h-11 sm:w-11" />
+            <span
+              className="truncate text-[1.35rem] font-medium leading-none tracking-[-0.04em] text-white sm:text-2xl"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              {SITE_CONFIG.name}
+            </span>
           </Link>
         </div>
 

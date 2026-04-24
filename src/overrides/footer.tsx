@@ -22,10 +22,16 @@ export function FooterOverride() {
             <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/40">Masthead</p>
             <Link
               href="/"
-              className="mt-3 block w-fit"
+              className="mt-3 flex w-fit max-w-full items-center gap-3"
               aria-label={`${SITE_CONFIG.name} — home`}
             >
-              <MastheadMark className="h-12 w-12 sm:h-14 sm:w-14" />
+              <MastheadMark className="h-12 w-12 shrink-0 sm:h-14 sm:w-14" />
+              <span
+                className="text-2xl font-medium leading-tight tracking-[-0.03em] text-white"
+                style={{ fontFamily: 'var(--font-display)' }}
+              >
+                {SITE_CONFIG.name}
+              </span>
             </Link>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/55">{SITE_CONFIG.tagline}</p>
           </div>
