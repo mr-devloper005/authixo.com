@@ -54,14 +54,21 @@ export function TaskListClient({ task, initialPosts, category }: Props) {
 
   if (!merged.length) {
     return (
-      <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">
-        No posts yet for this section.
+      <div className="border border-dashed border-[#0a0a0a]/20 bg-white/20 p-12 text-center text-sm text-muted-foreground">
+        Nothing filed in this section yet.
       </div>
     );
   }
 
+  const listLayout =
+    task === "mediaDistribution"
+      ? "flex max-w-3xl flex-col gap-0"
+      : task === "article"
+        ? "grid gap-6 sm:grid-cols-2"
+        : "grid gap-6 sm:grid-cols-2 lg:grid-cols-4";
+
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div className={listLayout}>
       {merged.map((post) => {
         const localOnly = (post as any).localOnly;
         const href = localOnly

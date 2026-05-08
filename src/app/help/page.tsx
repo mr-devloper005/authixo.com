@@ -1,51 +1,60 @@
 ﻿import Link from 'next/link'
 import { PageShell } from '@/components/shared/page-shell'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { mockFaqs } from '@/data/mock-data'
 
 const topics = [
-  { title: 'Getting Started', description: 'Create your account and publish your first post.' },
-  { title: 'Bookmarks & Collections', description: 'Save links, organize folders, and share collections.' },
-  { title: 'Listings & Ads', description: 'Manage your business listings and classifieds.' },
+  {
+    title: 'Reading & archive',
+    description: 'The /updates list is the main feed. Category filters narrow the file without changing the article layout.',
+  },
+  {
+    title: 'Accounts',
+    description: 'Sign in from the login page when you need the dashboard. Sessions are local to this site’s auth shell.',
+  },
+  {
+    title: 'Contacting the desk',
+    description: 'Use the contact page to route a note; we answer with the same direct tone as the public copy.',
+  },
 ]
 
 export default function HelpPage() {
   return (
     <PageShell
-      title="Help Center"
-      description="Find answers, guides, and best practices."
-      actions={
-        <Button asChild>
-          <Link href="/contact">Contact Support</Link>
-        </Button>
+      eyebrow="Support"
+      title="Help"
+      description="Short answers for readers and contributors. For anything sensitive, use Contact."
+      leadBand={
+        <p>
+          <Link className="font-medium underline decoration-[#1a1412]/30 underline-offset-2" href="/contact">
+            Contact the desk
+          </Link>{' '}
+          for corrections, rights questions, or partnership notes.
+        </p>
       }
     >
-      <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="grid gap-6 md:grid-cols-2">
-          {topics.map((topic) => (
-            <Card key={topic.title} className="border-border bg-card transition-transform hover:-translate-y-1">
-              <CardContent className="p-6">
-                <h2 className="text-lg font-semibold text-foreground">{topic.title}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">{topic.description}</p>
-              </CardContent>
-            </Card>
+      <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+        <div className="space-y-0 border border-[#0a0a0a]/10">
+          {topics.map((t) => (
+            <div key={t.title} className="border-b border-[#0a0a0a]/8 p-5 last:border-b-0 sm:p-6">
+              <h2 className="text-base font-medium text-[#0a0a0a]" style={{ fontFamily: 'var(--font-display)' }}>
+                {t.title}
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-[#2a2220]">{t.description}</p>
+            </div>
           ))}
         </div>
-        <Card className="border-border bg-card">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-foreground">FAQ</h3>
-            <Accordion type="single" collapsible className="mt-4">
-              {mockFaqs.map((faq) => (
-                <AccordionItem key={faq.id} value={faq.id}>
-                  <AccordionTrigger>{faq.question}</AccordionTrigger>
-                  <AccordionContent>{faq.answer}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </CardContent>
-        </Card>
+        <div className="border border-[#0a0a0a]/10 bg-white/30 p-5 sm:p-6">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-[#0a0a0a]/50">FAQ</h3>
+          <Accordion type="single" collapsible className="mt-3">
+            {mockFaqs.map((faq) => (
+              <AccordionItem key={faq.id} value={faq.id} className="border-[#0a0a0a]/10">
+                <AccordionTrigger className="text-left text-sm text-[#0a0a0a] hover:no-underline">{faq.question}</AccordionTrigger>
+                <AccordionContent className="text-sm text-[#2a2220]">{faq.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
       </div>
     </PageShell>
   )

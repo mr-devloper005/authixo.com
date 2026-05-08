@@ -29,7 +29,7 @@ const variantShells = {
   'listing-directory': 'bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.08),transparent_24%),linear-gradient(180deg,#f8fbff_0%,#ffffff_100%)]',
   'listing-showcase': 'bg-[linear-gradient(180deg,#ffffff_0%,#f4f9ff_100%)]',
   'article-editorial': 'bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.08),transparent_20%),linear-gradient(180deg,#fff8ef_0%,#ffffff_100%)]',
-  'article-journal': 'bg-[linear-gradient(180deg,#fffdf9_0%,#f7f1ea_100%)]',
+  'article-journal': 'bg-[#e8e2dc] text-[#0a0a0a]',
   'image-masonry': 'bg-[linear-gradient(180deg,#09101d_0%,#111c2f_100%)] text-white',
   'image-portfolio': 'bg-[linear-gradient(180deg,#07111f_0%,#13203a_100%)] text-white',
   'profile-creator': 'bg-[linear-gradient(180deg,#0a1120_0%,#101c34_100%)] text-white',
@@ -87,7 +87,7 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
         }
 
   return (
-    <div className={`min-h-screen ${shellClass}`}>
+    <div className={`min-h-screen ${shellClass}`} data-editorial-list={task}>
       <NavbarShell />
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {task === 'listing' ? (
@@ -148,26 +148,86 @@ export async function TaskListPage({ task, category }: { task: TaskKey; category
         ) : null}
 
         {layoutKey === 'article-editorial' || layoutKey === 'article-journal' ? (
-          <section className="mb-12 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
-            <div>
-              <p className={`text-xs uppercase tracking-[0.3em] ${ui.muted}`}>{taskConfig?.label || task}</p>
-              <h1 className="mt-3 max-w-4xl text-5xl font-semibold tracking-[-0.05em] text-foreground">{taskConfig?.description || 'Latest posts'}</h1>
-              <p className={`mt-5 max-w-2xl text-sm leading-8 ${ui.muted}`}>This reading surface uses slower pacing, stronger typographic hierarchy, and more breathing room so long-form content feels intentional rather than squeezed into a generic feed.</p>
-            </div>
-            <div className={`rounded-[2rem] p-6 ${ui.panel}`}>
-              <p className={`text-xs font-semibold uppercase tracking-[0.24em] ${ui.muted}`}>Reading note</p>
-              <p className={`mt-4 text-sm leading-7 ${ui.muted}`}>Use category filters to jump between topics without collapsing the page into the same repeated card rhythm used by other task types.</p>
-              <form className="mt-5 flex items-center gap-3" action={taskConfig?.route || '#'}>
-                <select name="category" defaultValue={normalizedCategory} className={`h-11 flex-1 rounded-xl px-3 text-sm ${ui.input}`}>
-                  <option value="all">All categories</option>
-                  {CATEGORY_OPTIONS.map((item) => (
-                    <option key={item.slug} value={item.slug}>{item.name}</option>
-                  ))}
-                </select>
-                <button type="submit" className={`h-11 rounded-xl px-4 text-sm font-medium ${ui.button}`}>Apply</button>
-              </form>
-            </div>
-          </section>
+          task === 'mediaDistribution' ? (
+            <section className="mb-12 -mx-4 max-w-[100vw] border-b border-white/10 bg-[#0a0a0a] px-4 py-10 text-white sm:-mx-6 sm:px-6 lg:mx-0 lg:max-w-none lg:px-0 lg:py-12">
+              <div className="max-w-7xl lg:pl-0">
+                <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-white/50">{taskConfig?.label || 'Dispatches'}</p>
+                <h1
+                  className="mt-4 max-w-4xl font-medium leading-[1.05] tracking-[-0.04em] text-white"
+                  style={{ fontSize: 'clamp(1.9rem, 3.2vw, 2.8rem)' }}
+                >
+                  {taskConfig?.description || 'Latest posts'}
+                </h1>
+                <p className="mt-6 max-w-2xl text-sm leading-7 text-white/65">Scan-dense list: category in the margin, image at a fixed width, horizontal rhythm made for glancing the whole file.</p>
+                <form className="mt-8 flex max-w-md flex-col gap-3 sm:flex-row sm:items-end" action={taskConfig?.route || '#'}>
+                  <div className="min-w-0 grow">
+                    <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/50">Filter</label>
+                    <select name="category" defaultValue={normalizedCategory} className="mt-1 h-11 w-full border border-white/15 bg-white/5 px-3 text-sm text-white">
+                      <option value="all">All categories</option>
+                      {CATEGORY_OPTIONS.map((item) => (
+                        <option key={item.slug} value={item.slug} className="text-black">{item.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <button type="submit" className="h-11 border border-white/25 bg-white px-5 text-sm font-medium text-[#0a0a0a]">
+                    Apply
+                  </button>
+                </form>
+              </div>
+            </section>
+          ) : task === 'article' ? (
+            <section className="mb-12 border border-[#0a0a0a]/10 bg-[#f2ebe4] p-6 sm:p-8">
+              <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-end">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[0.3em] text-[#0a0a0a]/35">Essays</p>
+                  <p className={`mt-3 text-[10px] font-semibold uppercase tracking-[0.3em] ${ui.muted}`}>{taskConfig?.label || 'Articles'}</p>
+                  <h1
+                    className="mt-4 max-w-4xl font-medium leading-tight tracking-[-0.04em] text-[#0a0a0a] sm:leading-[1.08]"
+                    style={{ fontSize: 'clamp(1.75rem, 2.5vw, 2.4rem)' }}
+                  >
+                    {taskConfig?.description || 'Latest posts'}
+                  </h1>
+                  <p className={`mt-5 max-w-2xl text-sm leading-7 ${ui.muted}`}>
+                    A different grid: larger stills, more image surface, slower cadence than the dispatch list on /updates.
+                  </p>
+                </div>
+                <form className="flex flex-col gap-2 sm:flex-row sm:items-end lg:justify-end" action={taskConfig?.route || '#'}>
+                  <div className="w-full min-w-0 sm:max-w-[220px]">
+                    <label className={`text-[10px] font-semibold uppercase ${ui.muted}`}>Category</label>
+                    <select name="category" defaultValue={normalizedCategory} className={`mt-1 h-11 w-full border px-3 text-sm ${ui.input}`}>
+                      <option value="all">All categories</option>
+                      {CATEGORY_OPTIONS.map((item) => (
+                        <option key={item.slug} value={item.slug}>{item.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <button type="submit" className={`h-11 w-full border-0 px-5 text-sm font-medium sm:min-w-[120px] ${ui.button}`}>
+                    Refine
+                  </button>
+                </form>
+              </div>
+            </section>
+          ) : (
+            <section className="mb-12 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+              <div>
+                <p className={`text-xs uppercase tracking-[0.3em] ${ui.muted}`}>{taskConfig?.label || task}</p>
+                <h1 className="mt-3 max-w-4xl text-5xl font-semibold tracking-[-0.05em] text-foreground">{taskConfig?.description || 'Latest posts'}</h1>
+                <p className={`mt-5 max-w-2xl text-sm leading-8 ${ui.muted}`}>This reading surface uses calmer type and more breathing room than a directory-style feed.</p>
+              </div>
+              <div className={`rounded-lg p-6 sm:rounded-none ${ui.panel}`}>
+                <p className={`text-xs font-semibold uppercase tracking-[0.24em] ${ui.muted}`}>Filters</p>
+                <form className="mt-4 flex items-center gap-3" action={taskConfig?.route || '#'}>
+                  <select name="category" defaultValue={normalizedCategory} className={`h-11 flex-1 border px-3 text-sm sm:rounded-none ${ui.input}`}>
+                    <option value="all">All categories</option>
+                    {CATEGORY_OPTIONS.map((item) => (
+                      <option key={item.slug} value={item.slug}>{item.name}</option>
+                    ))}
+                  </select>
+                  <button type="submit" className={`h-11 px-4 text-sm font-medium sm:rounded-none ${ui.button}`}>Apply</button>
+                </form>
+              </div>
+            </section>
+          )
         ) : null}
 
         {layoutKey === 'image-masonry' || layoutKey === 'image-portfolio' ? (

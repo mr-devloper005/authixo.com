@@ -72,28 +72,32 @@ export default async function SearchPage({
 
   return (
     <PageShell
-      title="Search"
+      eyebrow="Find"
+      title="Search the file"
       description={
         query
-          ? `Results for "${query}"`
-          : "Browse the latest posts across every task."
+          ? `Matches for “${query}” across published posts.`
+          : "Query titles, bodies, and tags. Master index is on unless you turn it off in the query string."
       }
       actions={
-        <form action="/search" className="flex w-full gap-2 sm:w-auto">
+        <form action="/search" className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
           <input type="hidden" name="master" value="1" />
           {category ? <input type="hidden" name="category" value={category} /> : null}
           {task ? <input type="hidden" name="task" value={task} /> : null}
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
             <Input
               name="q"
               defaultValue={query}
-              placeholder="Search across tasks..."
-              className="h-11 pl-9"
+              placeholder="Words, names, slugs…"
+              className="h-11 border-white/20 bg-white/10 pl-9 text-white placeholder:text-white/40"
             />
           </div>
-          <Button type="submit" className="h-11">
-            Search
+          <Button
+            type="submit"
+            className="h-11 border border-white/30 bg-white text-[#0a0a0a] hover:bg-[#C6A69F] hover:text-[#0a0a0a]"
+          >
+            Run query
           </Button>
         </form>
       }
@@ -107,8 +111,8 @@ export default async function SearchPage({
           })}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">
-          No matching posts yet.
+        <div className="border border-dashed border-[#0a0a0a]/20 bg-white/20 p-12 text-center text-sm text-[#3d3532]">
+          No open files match that string. Loosen the query or clear filters.
         </div>
       )}
     </PageShell>

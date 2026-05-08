@@ -4,7 +4,7 @@ export const siteIdentity = {
   tagline: process.env.NEXT_PUBLIC_SITE_TAGLINE || 'Independent media updates',
   description:
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION ||
-    'A simple newsroom-style publication for announcements, coverage, and media updates on Authixo.',
+    'Independent dispatches and long reads from Authixo—black-and-rose editorial layout, no template chrome.',
   domain: process.env.NEXT_PUBLIC_SITE_DOMAIN || 'authixo.com',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://authixo.com',
   ogImage: process.env.NEXT_PUBLIC_SITE_OG_IMAGE || '/og-default.png',

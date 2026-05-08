@@ -40,6 +40,11 @@ const taskIcons: Record<TaskKey, any> = {
   classified: Tag,
   image: ImageIcon,
   profile: User,
+  mediaDistribution: FileText,
+  social: LayoutGrid,
+  pdf: FileText,
+  org: Building2,
+  comment: FileText,
 }
 
 function resolveTaskKey(value: unknown, fallback: TaskKey): TaskKey {
@@ -111,14 +116,16 @@ function getDirectoryTone(brandPack: string) {
 
 function getEditorialTone() {
   return {
-    shell: 'bg-[#fbf6ee] text-[#241711]',
-    panel: 'border border-[#dcc8b7] bg-[#fffdfa] shadow-[0_24px_60px_rgba(77,47,27,0.08)]',
-    soft: 'border border-[#e6d6c8] bg-[#fff4e8]',
-    muted: 'text-[#6e5547]',
-    title: 'text-[#241711]',
-    badge: 'bg-[#241711] text-[#fff1e2]',
-    action: 'bg-[#241711] text-[#fff1e2] hover:bg-[#3a241b]',
-    actionAlt: 'border border-[#dcc8b7] bg-transparent text-[#241711] hover:bg-[#f5e7d7]',
+    shell: 'bg-[#e8e2dc] text-[#0a0a0a]',
+    black: 'bg-[#0a0a0a] text-[#f4f0ec]',
+    panel: 'border-b border-[#0a0a0a]/12 bg-white',
+    soft: 'bg-[#C6A69F]/25',
+    rose: 'bg-[#C6A69F]',
+    muted: 'text-[#3d3532]/85',
+    title: 'text-[#0a0a0a]',
+    badge: 'bg-[#0a0a0a] text-[#f4f0ec]',
+    action: 'inline-flex items-center justify-center border border-white/20 bg-white px-6 py-3 text-sm font-medium tracking-wide text-[#0a0a0a] transition hover:bg-[#C6A69F]',
+    actionAlt: 'inline-flex items-center justify-center border border-white/40 px-6 py-3 text-sm text-white/90 transition hover:border-white',
   }
 }
 
@@ -257,14 +264,14 @@ function DirectoryHome({ primaryTask, enabledTasks, listingPosts, classifiedPost
           <div className="grid gap-4 md:grid-cols-2">
             {(profilePosts.length ? profilePosts : classifiedPosts).slice(0, 4).map((post) => {
               const meta = getPostMeta(post)
-              const taskKey = resolveTaskKey(post.task, profilePosts.length ? 'profile' : 'classified')
+              const taskKey = resolveTaskKey((post as { task?: unknown }).task, profilePosts.length ? 'profile' : 'classified')
               return (
                 <Link key={post.id} href={getTaskHref(taskKey, post.slug)} className={`overflow-hidden rounded-[1.8rem] ${tone.panel}`}>
                   <div className="relative h-44 overflow-hidden">
                     <ContentImage src={getPostImage(post)} alt={post.title} fill className="object-cover" />
                   </div>
                   <div className="p-5">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.24em] opacity-70">{meta.category || post.task || 'Profile'}</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.24em] opacity-70">{meta.category || (post as { task?: string }).task || 'Profile'}</p>
                     <h3 className="mt-2 text-xl font-semibold">{post.title}</h3>
                     <p className={`mt-2 text-sm leading-7 ${tone.muted}`}>{post.summary || 'Quick access to local information and related surfaces.'}</p>
                   </div>
@@ -312,160 +319,155 @@ function EditorialHome({
 }) {
   const tone = getEditorialTone()
   const defaultEditorialTask: TaskKey =
-    primaryTask?.key === 'mediaDistribution' || primaryTask?.key === 'article'
-      ? primaryTask.key
-      : 'article'
+    primaryTask?.key === 'mediaDistribution' || primaryTask?.key === 'article' ? primaryTask.key : 'article'
 
   const postHref = (post: SitePost) =>
     getTaskHref(resolveTaskKey((post as { task?: unknown }).task, defaultEditorialTask), post.slug)
 
   const lead = posts[0]
   const spotlightPosts = posts.slice(1, 4)
-  const deckPosts = posts.slice(10, 16)
-  const featuredSecondary = posts[1]
+  const deckPosts = posts.slice(4, 10)
+  const leadDate = lead
+    ? new Date(lead.publishedAt || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : ''
 
   const headline = lead?.title || SITE_CONFIG.name
   const summarySource = lead?.summary || SITE_CONFIG.description
   const [bodyA, bodyB] = splitIntoTwoParagraphs(summarySource)
-  const secondParagraph = bodyB || SITE_CONFIG.tagline
+  const leadBlurb = bodyA || summarySource
+  const roseLine = bodyB || SITE_CONFIG.tagline
 
   return (
-    <main className="bg-[#fafafa] text-[#1a1a1a]">
-      <div className="mx-auto min-h-screen max-w-[1400px] border-x border-[#0f172a]/8 bg-white shadow-[0_0_0_1px_rgba(15,23,42,0.04)]">
-        <section className="px-5 py-12 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-10 lg:items-start">
-            {/* Left: lead story — headings + highlighted body */}
-            <div className="order-1 max-w-xl lg:pt-2">
-              <p className="font-display text-[2.15rem] font-medium leading-[1.05] tracking-[-0.04em] sm:text-5xl">
-                {SITE_CONFIG.name}
-              </p>
-              <p className="mt-4 max-w-md text-[0.95rem] leading-relaxed text-[#444]">{SITE_CONFIG.tagline}</p>
-
-              <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">
-                {lead ? getPostCategoryLabel(lead) : 'Featured'}
-              </p>
-              <h1 className="font-display mt-3 text-[2.35rem] font-medium leading-[1.08] tracking-[-0.035em] text-[#111] sm:text-5xl lg:text-[2.75rem]">
-                <span className="decoration-primary/35 underline decoration-2 underline-offset-[0.18em]">{headline}</span>
+    <main className={tone.shell}>
+      {/* Black masthead — typographic only, no hero image */}
+      <section className={`${tone.black} relative overflow-hidden`}>
+        <div className="mx-auto max-w-[1600px] px-4 pb-16 pt-8 sm:px-8 sm:pb-20 sm:pt-10 lg:px-12 lg:pb-24 lg:pt-12">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
+            <div className="space-y-4 text-[10px] font-medium uppercase tracking-[0.28em] text-white/60 lg:col-span-4 lg:pt-2">
+              <p className="max-w-[200px] leading-relaxed text-white/90">{SITE_CONFIG.name}</p>
+              <p className="text-white/45">{primaryTask ? `${primaryTask.label}` : 'Publication'}</p>
+              {lead ? (
+                <p className="pt-2 text-white/50">
+                  {getPostCategoryLabel(lead)} · {leadDate}
+                </p>
+              ) : null}
+            </div>
+            <div className="lg:col-span-8">
+              <h1
+                className="max-w-4xl font-medium leading-[0.98] tracking-[-0.04em] text-white sm:leading-[0.99]"
+                style={{ fontSize: 'clamp(2.35rem, 5.5vw, 4.25rem)', fontFamily: 'var(--font-display)' }}
+              >
+                {headline}
               </h1>
+            </div>
+          </div>
+          <div className="mt-10 sm:mt-14">
+            <Link href={primaryTask?.route || '/updates'} className={tone.action}>
+              {primaryTask?.label || 'Read dispatches'}
+            </Link>
+          </div>
+          <div className="mt-14 h-px w-24 bg-white/25" aria-hidden />
+        </div>
+      </section>
 
-              <div className="mt-8 space-y-5 rounded-r-xl border-l-4 border-primary bg-primary/6 py-4 pl-5 pr-4 text-[0.98rem] leading-[1.75] text-[#2d2d2d]">
-                {bodyA ? <p>{bodyA}</p> : null}
-                {secondParagraph ? <p className="text-[#3d3d3d]">{secondParagraph}</p> : null}
-              </div>
+      {/* Lead block — dusty rose */}
+      <section className={`${tone.rose} px-4 py-10 text-[#1a1412] sm:px-8 sm:py-12 lg:px-12`}>
+        <p
+          className="mx-auto max-w-3xl text-[1.1rem] font-medium leading-[1.55] sm:text-xl sm:leading-[1.5]"
+          style={{ fontFamily: 'var(--font-sans)' }}
+        >
+          {leadBlurb}
+        </p>
+        {roseLine ? <p className="mx-auto mt-6 max-w-3xl text-sm leading-7 text-[#2a2220]/85">{roseLine}</p> : null}
+      </section>
 
-              {featuredSecondary ? (
-                <Link
-                  href={postHref(featuredSecondary)}
-                  className="mt-10 block max-w-lg border-t border-black/10 pt-8 transition-colors hover:bg-[#f8fafc]"
+      {/* Body: asymmetric grid */}
+      <div className="bg-[#f4f0ec]">
+        <section className="mx-auto max-w-[1600px] border-t border-[#0a0a0a]/10 px-4 py-14 sm:px-8 lg:px-12">
+          {lead ? (
+            <div className="grid gap-12 border-b border-[#0a0a0a]/8 pb-14 lg:grid-cols-[1.1fr_0.9fr]">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#0a0a0a]/45">Cover line</p>
+                <h2
+                  className="mt-4 text-3xl font-medium leading-tight tracking-[-0.03em] sm:text-4xl"
+                  style={{ fontFamily: 'var(--font-display)' }}
                 >
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#64748b]">Also this week</p>
-                  <p className="font-display mt-2 text-lg font-semibold leading-snug text-[#0f172a]">
-                    {featuredSecondary.title}
-                  </p>
-                  {featuredSecondary.summary ? (
-                    <p className="mt-3 rounded-md bg-amber-50/90 px-3 py-2 text-sm leading-relaxed text-[#422006] ring-1 ring-amber-200/80">
-                      {featuredSecondary.summary}
-                    </p>
-                  ) : null}
-                </Link>
-              ) : (
-                <div className="mt-10 border-t border-black/10 pt-8">
-                  <Link
-                    href={primaryTask?.route || '/articles'}
-                    className={`inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold ${tone.action}`}
-                  >
-                    {primaryTask?.label || 'Browse'}
-                    <ArrowRight className="h-4 w-4" />
+                  {lead.title}
+                </h2>
+                {lead.summary ? <p className="mt-6 text-base leading-[1.75] text-[#2a2220]">{lead.summary}</p> : null}
+                <div className="mt-8">
+                  <Link href={postHref(lead)} className="text-sm font-semibold tracking-wide text-[#0a0a0a] underline decoration-[#0a0a0a]/25 underline-offset-4 hover:decoration-[#0a0a0a]">
+                    Open full piece
                   </Link>
                 </div>
-              )}
+              </div>
+              <div className="flex flex-col justify-between gap-6 border-l border-[#0a0a0a]/10 pl-0 lg:pl-10">
+                {spotlightPosts.length ? (
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#0a0a0a]/45">Also filed</p>
+                    <ul className="mt-4 space-y-4">
+                      {spotlightPosts.map((post) => (
+                        <li key={post.id} className="border-b border-[#0a0a0a]/8 pb-4 last:border-0 last:pb-0">
+                          <Link href={postHref(post)} className="group block">
+                            <p className="text-[10px] uppercase tracking-[0.22em] text-[#0a0a0a]/50">{getPostCategoryLabel(post)}</p>
+                            <p
+                              className="mt-2 text-lg font-medium text-[#0a0a0a] group-hover:opacity-80"
+                              style={{ fontFamily: 'var(--font-display)' }}
+                            >
+                              {post.title}
+                            </p>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                <p className="text-xs leading-relaxed text-[#3d3532]/75">{siteContent.home.introParagraphs[0]}</p>
+              </div>
             </div>
+          ) : null}
 
-            {/* Center: spotlight stack — text-only cards */}
-            <div className="order-3 flex flex-col gap-5 lg:order-2">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">Spotlight</p>
-              {spotlightPosts.length ? (
-                spotlightPosts.map((post, i) => (
-                  <Link
-                    key={post.id}
-                    href={postHref(post)}
-                    className="group rounded-xl border border-black/10 bg-[#fafafa] p-5 shadow-sm transition hover:border-primary/40 hover:shadow-md"
-                  >
-                    <span className="text-[10px] font-bold tabular-nums text-primary/80">{String(i + 1).padStart(2, '0')}</span>
-                    <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#64748b]">
-                      {getPostCategoryLabel(post)}
-                    </p>
-                    <h2 className="font-display mt-2 text-xl font-semibold leading-snug text-[#0f172a] group-hover:text-primary">
-                      {post.title}
-                    </h2>
-                    {post.summary ? (
-                      <p className="mt-3 border-l-2 border-primary/50 pl-3 text-sm leading-relaxed text-[#444]">{post.summary}</p>
-                    ) : null}
-                  </Link>
-                ))
-              ) : (
-                <p className="text-sm text-[#666]">More stories will appear here.</p>
-              )}
-            </div>
-
-          </div>
-
-          {/* Heavy grid — more dummy / real cards, content-forward */}
           {deckPosts.length ? (
-            <div className="mt-16 border-t border-black/10 pt-14">
-              <h2 className="font-display text-2xl font-semibold tracking-[-0.02em] text-[#111] sm:text-3xl">
-                <span className="bg-[linear-gradient(transparent_65%,rgba(29,78,216,0.15)_0)]">From the desk</span>
-              </h2>
-              <p className="mt-2 max-w-2xl text-sm text-[#555]">
-                Longer summaries stay on the home page for scan-friendly reading. When your CMS feed is connected, these rows fill automatically from published posts.
-              </p>
+            <div className="pt-12">
+              <h3 className="text-2xl font-medium tracking-[-0.02em] text-[#0a0a0a]" style={{ fontFamily: 'var(--font-display)' }}>
+                Continued
+              </h3>
+              <p className="mt-2 max-w-2xl text-sm text-[#3d3532]">Deeper in the file—more dispatches in the same type system, without the generic card chrome.</p>
               <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {deckPosts.map((post) => (
                   <Link
                     key={post.id}
                     href={postHref(post)}
-                    className="flex h-full flex-col rounded-2xl border border-black/10 bg-white p-6 shadow-[0_8px_30px_rgba(15,23,42,0.06)] transition hover:border-primary/35 hover:shadow-[0_12px_40px_rgba(15,23,42,0.1)]"
+                    className="group block border border-[#0a0a0a]/10 bg-white/30 p-6"
                   >
-                    <span className="w-fit rounded-full bg-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
-                      {getPostCategoryLabel(post)}
-                    </span>
-                    <h3 className="font-display mt-4 text-xl font-semibold leading-snug text-[#0f172a]">{post.title}</h3>
-                    {post.summary ? (
-                      <p className="mt-4 grow rounded-lg bg-slate-50 px-3 py-3 text-sm leading-[1.65] text-[#334155] ring-1 ring-slate-200/80">
-                        {post.summary}
-                      </p>
-                    ) : null}
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#0a0a0a]/45">{getPostCategoryLabel(post)}</p>
+                    <h4
+                      className="mt-3 text-lg font-medium leading-snug text-[#0a0a0a] group-hover:opacity-80"
+                      style={{ fontFamily: 'var(--font-display)' }}
+                    >
+                      {post.title}
+                    </h4>
+                    {post.summary ? <p className="mt-3 line-clamp-3 text-sm leading-[1.65] text-[#2a2220]">{post.summary}</p> : null}
                   </Link>
                 ))}
               </div>
             </div>
           ) : null}
-
-          {supportTasks.length ? (
-            <div className="mt-16 grid gap-4 border-t border-black/10 pt-12 sm:grid-cols-2 lg:grid-cols-3">
-              {supportTasks.slice(0, 3).map((task) => (
-                <Link
-                  key={task.key}
-                  href={task.route}
-                  className="rounded-xl border border-black/10 bg-[#fafafa] px-5 py-4 transition hover:bg-[#f3f3f3]"
-                >
-                  <h3 className="font-display text-lg font-medium text-[#111]">{task.label}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[#555]">{task.description}</p>
-                </Link>
-              ))}
-            </div>
-          ) : null}
         </section>
-
-        <div
-          className="h-4 w-full"
-          style={{
-            background:
-              'repeating-linear-gradient(90deg, #0a0a0a 0px, #0a0a0a 3px, #fff 3px, #fff 5px, #0a0a0a 5px, #0a0a0a 8px, #fafafa 8px, #fafafa 11px)',
-          }}
-          aria-hidden
-        />
       </div>
+
+      {supportTasks.length ? (
+        <section className="border-t border-[#0a0a0a]/10 bg-white px-4 py-10 sm:px-8 lg:px-12">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#0a0a0a]/40">More lanes</p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-5">
+            {supportTasks.map((task) => (
+              <Link key={task.key} href={task.route} className="text-sm text-[#0a0a0a] underline decoration-[#0a0a0a]/20 underline-offset-4 hover:decoration-[#0a0a0a]">
+                {task.label}
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </main>
   )
 }
@@ -502,7 +504,7 @@ function VisualHome({ primaryTask, imagePosts, profilePosts, articlePosts }: { p
             {gallery.slice(0, 5).map((post, index) => (
               <Link
                 key={post.id}
-                href={getTaskHref(resolveTaskKey(post.task, 'image'), post.slug)}
+                href={getTaskHref(resolveTaskKey((post as { task?: unknown }).task, 'image'), post.slug)}
                 className={index === 0 ? `col-span-2 row-span-2 overflow-hidden rounded-[2.4rem] ${tone.panel}` : `overflow-hidden rounded-[1.8rem] ${tone.soft}`}
               >
                 <div className={index === 0 ? 'relative h-[360px]' : 'relative h-[170px]'}>
@@ -567,7 +569,7 @@ function CurationHome({ primaryTask, bookmarkPosts, profilePosts, articlePosts }
 
           <div className="grid gap-4 md:grid-cols-2">
             {collections.map((post) => (
-              <Link key={post.id} href={getTaskHref(resolveTaskKey(post.task, 'sbm'), post.slug)} className={`rounded-[1.8rem] p-6 ${tone.panel}`}>
+              <Link key={post.id} href={getTaskHref(resolveTaskKey((post as { task?: unknown }).task, 'sbm'), post.slug)} className={`rounded-[1.8rem] p-6 ${tone.panel}`}>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Collection</p>
                 <h3 className="mt-3 text-2xl font-semibold">{post.title}</h3>
                 <p className={`mt-3 text-sm leading-8 ${tone.muted}`}>{post.summary || 'A calmer bookmark surface with room for context and grouping.'}</p>

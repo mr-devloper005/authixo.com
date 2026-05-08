@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Bookmark, Building2, FileText, Image as ImageIcon, Sparkles } from 'lucide-react'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
+import { MastheadMark } from '@/components/shared/masthead-mark'
 import { getFactoryState } from '@/design/factory/get-factory-state'
 import { getProductKind } from '@/design/factory/get-product-kind'
 import { REGISTER_PAGE_OVERRIDE_ENABLED, RegisterPageOverride } from '@/overrides/register-page'
@@ -64,6 +65,59 @@ export default function RegisterPage() {
   const productKind = getProductKind(recipe)
   const config = getRegisterConfig(productKind)
   const Icon = config.icon
+  const inputClass = 'h-12 w-full border border-[#0a0a0a]/20 bg-white px-4 text-sm text-[#0a0a0a] outline-none focus:border-[#0a0a0a]'
+
+  if (productKind === 'editorial') {
+    return (
+      <div className="min-h-screen bg-[#e8e2dc] text-[#0a0a0a]">
+        <NavbarShell />
+        <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+          <section className="grid gap-0 border border-[#0a0a0a]/10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+            <div className="border-b border-white/10 bg-[#0a0a0a] p-8 text-[#f4f0ec] lg:border-b-0 lg:border-r">
+              <div className="flex items-start gap-4 sm:gap-5">
+                <MastheadMark className="h-14 w-14 sm:h-16 sm:w-16" />
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/45">Join</p>
+                  <h1 className="mt-2 text-3xl font-medium tracking-[-0.04em] sm:text-4xl" style={{ fontFamily: 'var(--font-display)' }}>
+                    Open a desk account
+                  </h1>
+                  <p className="mt-4 text-sm leading-relaxed text-white/65">Used for publishing flows tied to this site. No social graph, no growth prompts.</p>
+                </div>
+              </div>
+              <p className="mt-6 border-l-2 border-[#C6A69F] pl-3 text-sm text-white/75">You can still read everything here without an account.</p>
+            </div>
+            <div className="bg-white/50 p-8">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#0a0a0a]/50">Register</p>
+              <form className="mt-4 grid gap-3">
+                <input className={inputClass} placeholder="Full name" name="name" autoComplete="name" />
+                <input className={inputClass} placeholder="Email" name="email" type="email" autoComplete="email" />
+                <input className={inputClass} placeholder="Password" name="password" type="password" autoComplete="new-password" />
+                <input
+                  className={inputClass}
+                  placeholder="What you plan to publish (optional)"
+                  name="note"
+                />
+                <button
+                  type="submit"
+                  className="mt-1 h-12 w-full border-0 bg-[#0a0a0a] text-sm font-semibold text-white transition hover:bg-[#1a1a1a] sm:max-w-sm"
+                >
+                  Create account
+                </button>
+              </form>
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-2 text-sm text-[#3d3532]">
+                <span>Have credentials?</span>
+                <Link href="/login" className="inline-flex items-center gap-2 font-medium text-[#0a0a0a] underline decoration-[#0a0a0a]/30 underline-offset-4">
+                  <Sparkles className="h-4 w-4" />
+                  Sign in
+                </Link>
+              </div>
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <div className={`min-h-screen ${config.shell}`}>

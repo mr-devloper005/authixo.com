@@ -1,29 +1,40 @@
 ﻿import { PageShell } from '@/components/shared/page-shell'
-import { Card, CardContent } from '@/components/ui/card'
 
 const sections = [
-  { title: 'Data We Collect', body: 'Account information, usage analytics, and content you submit.' },
-  { title: 'How We Use Data', body: 'To personalize your experience, improve search, and keep the platform secure.' },
-  { title: 'Your Choices', body: 'You can manage email preferences and delete your account at any time.' },
+  {
+    title: 'What we collect',
+    body: 'We may collect the email and name you provide, content you submit for publication, basic device and usage signals needed to run the site, and any messages you send through contact flows.',
+  },
+  {
+    title: 'How we use it',
+    body: 'To deliver the service you asked for, keep accounts secure, fix bugs, and understand aggregate traffic—never to sell a cold-contact list of readers.',
+  },
+  {
+    title: 'Storage & access',
+    body: 'Data lives with our hosting and tooling providers under their own DPAs. You can request export or deletion where applicable by contacting the desk with the same email you used to register.',
+  },
+  {
+    title: 'Your choices',
+    body: 'You can stop using the site, clear cookies, or ask us to close an account tied to a verifiable address. We will respond within a reasonable window.',
+  },
 ]
 
 export default function PrivacyPage() {
   return (
     <PageShell
-      title="Privacy Policy"
-      description="How we collect, use, and protect your information."
+      eyebrow="Policy"
+      title="Privacy"
+      description="A plain-language summary of how this publication-adjacent site handles information."
     >
-      <Card className="border-border bg-card">
-        <CardContent className="p-6 space-y-4">
-          <p className="text-xs text-muted-foreground">Last updated: March 16, 2026</p>
-          {sections.map((section) => (
-            <div key={section.title} className="rounded-lg border border-border bg-secondary/40 p-4">
-              <h3 className="text-sm font-semibold text-foreground">{section.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{section.body}</p>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      <p className="text-xs font-medium uppercase tracking-[0.2em] text-[#0a0a0a]/50">Last updated — April 2026</p>
+      <div className="mt-6 space-y-0 border border-[#0a0a0a]/10">
+        {sections.map((section) => (
+          <div key={section.title} className="border-b border-[#0a0a0a]/8 p-5 last:border-b-0 sm:p-6">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-[#0a0a0a]">{section.title}</h2>
+            <p className="mt-2 text-sm leading-[1.75] text-[#2a2220]">{section.body}</p>
+          </div>
+        ))}
+      </div>
     </PageShell>
   )
 }

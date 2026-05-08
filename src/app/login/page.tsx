@@ -1,7 +1,8 @@
-import Link from 'next/link'
-import { Bookmark, Building2, FileText, Image as ImageIcon, Sparkles } from 'lucide-react'
+import { Bookmark, Building2, FileText, Image as ImageIcon } from 'lucide-react'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
+import { MastheadMark } from '@/components/shared/masthead-mark'
+import { LoginForm } from '@/components/auth/login-form'
 import { getFactoryState } from '@/design/factory/get-factory-state'
 import { getProductKind } from '@/design/factory/get-product-kind'
 import { LOGIN_PAGE_OVERRIDE_ENABLED, LoginPageOverride } from '@/overrides/login-page'
@@ -64,6 +65,44 @@ export default function LoginPage() {
   const productKind = getProductKind(recipe)
   const config = getLoginConfig(productKind)
   const Icon = config.icon
+  const inputEditorial = 'h-12 w-full border border-[#0a0a0a]/20 bg-white px-4 text-sm text-[#0a0a0a] outline-none focus:border-[#0a0a0a]'
+
+  if (productKind === 'editorial') {
+    return (
+      <div className="min-h-screen bg-[#e8e2dc] text-[#0a0a0a]">
+        <NavbarShell />
+        <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+          <section className="grid gap-0 border border-[#0a0a0a]/10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+            <div className="border-b border-white/10 bg-[#0a0a0a] p-8 text-[#f4f0ec] lg:border-b-0 lg:border-r">
+              <div className="flex items-start gap-4 sm:gap-5">
+                <MastheadMark className="h-14 w-14 sm:h-16 sm:w-16" />
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/45">Account</p>
+                  <h1 className="mt-2 text-3xl font-medium tracking-[-0.04em] sm:text-4xl" style={{ fontFamily: 'var(--font-display)' }}>
+                    Sign in to the desk
+                  </h1>
+                  <p className="mt-4 text-sm leading-relaxed text-white/65">Same black-and-paper system as the public site—one session for dispatches, drafts, and the dashboard.</p>
+                </div>
+              </div>
+              <ul className="mt-8 space-y-3 text-sm text-white/75">
+                <li className="border-l-2 border-[#C6A69F] pl-3">Calm type, no generic admin chrome</li>
+                <li className="border-l-2 border-white/15 pl-3">Routes to the tasks enabled for this build</li>
+                <li className="border-l-2 border-white/15 pl-3">Log out from account settings or clear storage</li>
+              </ul>
+            </div>
+            <div className="bg-white/50 p-8">
+              <LoginForm
+                actionClass="rounded-none h-12 w-full border-0 bg-[#0a0a0a] px-6 text-white hover:bg-[#1a1a1a] sm:max-w-sm"
+                mutedClass="text-[#3d3532]"
+                inputClassName={inputEditorial}
+              />
+            </div>
+          </section>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   return (
     <div className={`min-h-screen ${config.shell}`}>
@@ -82,19 +121,7 @@ export default function LoginPage() {
           </div>
 
           <div className={`rounded-[2rem] p-8 ${config.panel}`}>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] opacity-70">Welcome back</p>
-            <form className="mt-6 grid gap-4">
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Email address" />
-              <input className="h-12 rounded-xl border border-current/10 bg-transparent px-4 text-sm" placeholder="Password" type="password" />
-              <button type="submit" className={`inline-flex h-12 items-center justify-center rounded-full px-6 text-sm font-semibold ${config.action}`}>Sign in</button>
-            </form>
-            <div className={`mt-6 flex items-center justify-between text-sm ${config.muted}`}>
-              <Link href="/forgot-password" className="hover:underline">Forgot password?</Link>
-              <Link href="/register" className="inline-flex items-center gap-2 font-semibold hover:underline">
-                <Sparkles className="h-4 w-4" />
-                Create account
-              </Link>
-            </div>
+            <LoginForm actionClass={config.action} mutedClass={config.muted} />
           </div>
         </section>
       </main>
