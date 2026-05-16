@@ -1,105 +1,156 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Search } from 'lucide-react'
+import { Facebook, Linkedin, Link2, Mail, Twitter } from 'lucide-react'
 import { NavbarShell } from '@/components/shared/navbar-shell'
 import { Footer } from '@/components/shared/footer'
-import { fetchTaskPostBySlug, fetchTaskPosts } from '@/lib/task-data'
+import { ContentImage } from '@/components/shared/content-image'
+import { fetchTaskPostBySlug, fetchTaskPosts, buildPostUrl } from '@/lib/task-data'
 import type { TaskKey } from '@/lib/site-config'
+import type { SitePost } from '@/lib/site-connector'
+import { SITE_CONFIG } from '@/lib/site-config'
 import { formatRichHtml, RichContent } from '@/components/shared/rich-content'
 
 export const TASK_DETAIL_PAGE_OVERRIDE_ENABLED = true
 
+const isValidImageUrl = (value?: string | null) =>
+  typeof value === 'string' && (value.startsWith('/') || /^https?:\/\//i.test(value))
+
+const getContent = (post: SitePost) => {
+  const content = post.content && typeof post.content === 'object' ? post.content : {}
+  return content as Record<string, unknown>
+}
+
+const getImageUrls = (post: SitePost, content: Record<string, unknown>) => {
+  const media = Array.isArray(post.media) ? post.media : []
+  const mediaImages = media.map((item) => item?.url).filter((url): url is string => isValidImageUrl(url))
+  const contentImages = Array.isArray(content.images)
+    ? content.images.filter((url): url is string => typeof url === 'string' && isValidImageUrl(url))
+    : []
+  const merged = [...mediaImages, ...contentImages]
+  if (merged.length) return merged
+  if (isValidImageUrl(content.logo as string)) return [content.logo as string]
+  return [] as string[]
+}
+
 export async function TaskDetailPageOverride({ slug }: { task: TaskKey; slug: string }) {
   const post = await fetchTaskPostBySlug('mediaDistribution', slug)
   if (!post) notFound()
-  const recent = (await fetchTaskPosts('mediaDistribution', 8, { fresh: true })).filter((item) => item.slug !== slug).slice(0, 5)
-  const content = (post.content || {}) as Record<string, unknown>
-  const html = formatRichHtml((content.body as string) || post.summary || '', 'Post body will appear here.')
-  const dateLabel = new Date(post.publishedAt || Date.now()).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  })
+
+  const related = (await fetchTaskPosts('mediaDistribution', 8, { fresh: true }))
+    .filter((item) => item.slug !== slug)
+    .slice(0, 4)
+
+  const content = getContent(post)
+  const rawBody =
+    (typeof content.body === 'string' && content.body.trim()) ||
+    (typeof content.description === 'string' && content.description.trim()) ||
+    post.summary ||
+    ''
+  const html = formatRichHtml(rawBody, '')
+  const images = getImageUrls(post, content)
+  const hero = images[0]
+  const archivePath = SITE_CONFIG.taskViews.mediaDistribution || '/updates'
+  const pageUrl = `${SITE_CONFIG.baseUrl.replace(/\/$/, '')}${buildPostUrl('mediaDistribution', post.slug)}`
+  const shareText = encodeURIComponent(post.title)
+  const shareUrl = encodeURIComponent(pageUrl)
+  const date = post.publishedAt
+    ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : ''
 
   return (
-    <div className="min-h-screen bg-[#e8e2dc] text-[#0a0a0a]">
+    <div className="min-h-screen bg-white text-foreground">
       <NavbarShell />
-      <section className="border-b border-white/10 bg-[#0a0a0a] text-[#f4f0ec]">
-        <div className="mx-auto max-w-3xl px-4 pb-12 pt-10 sm:px-6 lg:px-8">
-          <div className="text-[10px] font-medium uppercase tracking-[0.3em] text-white/50">
-            <Link href="/updates" className="text-white/70 transition hover:text-white">
-              Dispatches
-            </Link>
-            <span className="px-2 text-white/35">/</span>
-            <span className="text-white/50">File</span>
-          </div>
-          <h1
-            className="mt-6 text-[1.9rem] font-medium leading-[1.08] tracking-[-0.04em] sm:text-4xl lg:text-[2.4rem] lg:leading-[1.06]"
-            style={{ fontFamily: 'var(--font-display)' }}
-          >
-            {post.title}
-          </h1>
-          <p className="mt-5 text-sm text-white/60">
-            <time dateTime={post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined}>{dateLabel}</time>
-            <span className="px-2 text-white/30">·</span>
-            <span>{post.authorName || 'Authixo desk'}</span>
-          </p>
-        </div>
-      </section>
 
-      <div className="h-2 w-full bg-[#C6A69F]" aria-hidden />
+      <article className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:pt-12">
+        <nav className="text-xs font-medium text-muted-foreground">
+          <Link href="/" className="hover:text-primary">
+            Home
+          </Link>
+          <span className="mx-2 opacity-40">/</span>
+          <Link href={archivePath} className="hover:text-primary">
+            Press releases
+          </Link>
+        </nav>
 
-      <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(260px,0.4fr)] lg:gap-14 lg:px-8">
-        <article>
-          <div
-            className="article-content prose prose-lg max-w-none border-0 text-[#1a1412] [font-family:var(--font-sans)]
-            prose-p:leading-[1.8] prose-headings:[font-family:var(--font-display)]"
-          >
-            <RichContent html={html} />
-          </div>
+        <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-14">
+          <div className="min-w-0">
+            <h1 className="font-[family-name:var(--font-display)] text-3xl font-semibold leading-[1.12] tracking-[-0.03em] text-foreground sm:text-4xl lg:text-[2.35rem]">
+              {post.title}
+            </h1>
 
-          {recent.length >= 2 ? (
-            <div className="mt-16 grid border border-[#0a0a0a]/10 md:grid-cols-2">
-              {recent.slice(0, 2).map((item, index) => (
-                <Link
-                  key={item.id}
-                  href={`/updates/${item.slug}`}
-                  className="border-b border-[#0a0a0a]/10 p-5 transition first:border-b md:first:border-r md:[&:first-child]:border-b-0"
-                >
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#0a0a0a]/40">{index === 0 ? 'Previous' : 'Next'}</p>
-                  <p className="mt-3 text-base font-medium leading-snug text-[#0a0a0a]" style={{ fontFamily: 'var(--font-display)' }}>
-                    {item.title}
-                  </p>
-                </Link>
-              ))}
+            {date ? (
+              <div className="mt-5 text-sm text-muted-foreground">
+                <span>{date}</span>
+              </div>
+            ) : null}
+
+            <div className="mt-6 flex flex-wrap gap-2">
+              <a
+                href={`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground shadow-sm transition hover:border-primary/40 hover:bg-muted"
+                aria-label="Share on X"
+              >
+                <Twitter className="h-4 w-4" />
+              </a>
+              <a
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground shadow-sm transition hover:border-primary/40 hover:bg-muted"
+                aria-label="Share on LinkedIn"
+              >
+                <Linkedin className="h-4 w-4" />
+              </a>
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground shadow-sm transition hover:border-primary/40 hover:bg-muted"
+                aria-label="Share on Facebook"
+              >
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a
+                href={`mailto:?subject=${shareText}&body=${shareUrl}`}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground shadow-sm transition hover:border-primary/40 hover:bg-muted"
+                aria-label="Email this release"
+              >
+                <Mail className="h-4 w-4" />
+              </a>
+              <span className="inline-flex items-center gap-1 rounded-full border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
+                <Link2 className="h-3.5 w-3.5" />
+                {pageUrl.replace(/^https?:\/\//, '')}
+              </span>
             </div>
-          ) : null}
-        </article>
 
-        <aside className="mt-10 space-y-0 border border-[#0a0a0a]/10 bg-white/20 lg:mt-0">
-          <div className="border-b border-[#0a0a0a]/10 p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#0a0a0a]/50">In this file</p>
-            <ul className="mt-3 space-y-2">
-              {recent.map((item) => (
-                <li key={item.id}>
-                  <Link href={`/updates/${item.slug}`} className="text-sm leading-relaxed text-[#2a2220] transition hover:text-[#0a0a0a]">
-                    {item.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {hero ? (
+              <div className="relative mt-10 aspect-[16/9] w-full overflow-hidden rounded-[1.25rem] border border-border bg-muted shadow-sm">
+                <ContentImage src={hero} alt={post.title} fill className="object-cover" priority />
+              </div>
+            ) : null}
+
+            <RichContent html={html} className="article-content mt-10 max-w-none text-[1.05rem] leading-[1.75] text-foreground/90" />
           </div>
-          <form action="/search" className="p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#0a0a0a]/50">Search</p>
-            <label className="mt-2 flex items-stretch border border-[#0a0a0a]/15">
-              <input name="q" className="min-w-0 flex-1 border-0 bg-white px-3 py-2.5 text-sm text-[#0a0a0a] outline-none" placeholder="Query the archive" />
-              <button type="submit" className="inline-flex w-10 shrink-0 items-center justify-center bg-[#0a0a0a] text-white" aria-label="Search">
-                <Search className="h-4 w-4" />
-              </button>
-            </label>
-          </form>
-        </aside>
-      </main>
+
+          <aside className="space-y-6 lg:pt-2">
+            <div className="rounded-[1.25rem] border border-border bg-white p-6 shadow-sm">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">More releases</p>
+              <ul className="mt-4 space-y-4">
+                {related.map((item) => (
+                  <li key={item.id}>
+                    <Link href={buildPostUrl('mediaDistribution', item.slug)} className="block text-sm font-semibold leading-snug text-foreground hover:text-primary">
+                      {item.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </article>
+
       <Footer />
     </div>
   )
